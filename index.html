@@ -149,6 +149,8 @@
                 padding: 20px;
                 border: 1px solid #ccc;
                 background-color: #fff;
+                max-width: 800px;
+                margin: 0 auto;
             }
         </style>
     </head>
@@ -383,9 +385,9 @@
             }
 
             function displayPossibleValues(values) {
-                const uniqueValues = [...new Set(values)];
-                const displayValues = isMultiSetView ? values : uniqueValues;
-                document.getElementById("values").innerHTML = displayValues.join(", ");
+                const tab = document.querySelector(".tab.active");
+                const selectedTab = tab.getAttribute("data-tab");
+                updateTabContent(selectedTab);
             }
 
             function sanitizeInput(event) {
@@ -485,13 +487,6 @@
                     }
                 });
 
-            document
-                .getElementById("toggle-view")
-                .addEventListener("click", function () {
-                    isMultiSetView = !isMultiSetView;
-                    updateResult();
-                });
-
             // Tab switching logic
             document.querySelectorAll(".tab").forEach((tab) => {
                 tab.addEventListener("click", function () {
@@ -513,8 +508,10 @@
                 const result = computeResult(original, operator, scalar);
                 const values = computePossibleValues(result);
                 const uniqueValues = [...new Set(values)];
-                const displayValues = selectedTab === "bag-view" ? values : uniqueValues;
-                document.getElementById("tab-content").innerHTML = displayValues.join(", ");
+                const displayValues =
+                    selectedTab === "bag-view" ? values : uniqueValues;
+                document.getElementById("tab-content").innerHTML =
+                    displayValues.join(", ");
             }
 
             // Initial tab content update
