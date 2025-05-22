@@ -12,7 +12,7 @@
                 background-color: #f0f0f0;
                 color: #333;
             }
-            header {
+            body > header {
                 text-align: center;
                 padding: 50px;
                 background-color: #fff;
@@ -31,9 +31,19 @@
                 border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
+            #calculator {
+                display: flex;
+                flex-direction: row;
+            }
+            #calculator header {
+                width: 40%;
+            }
+            .rows {
+                width: fit-content;
+                margin: 0 auto;
+            }
             .equation-row {
                 margin-bottom: 10px;
-                text-align: center;
             }
             .equation {
                 font-size: 1.5em;
@@ -47,6 +57,9 @@
                 display: inline-block;
                 text-align: center;
             }
+            #scalar {
+                font-size: 1.5em;
+            }
             .pm-symbol {
                 font-size: 1.2em;
                 color: #007bff;
@@ -56,29 +69,30 @@
                 display: inline;
             }
             #operation {
-                display: flex;
-                justify-content: center;
-                align-items: center;
                 gap: 10px;
                 margin: 10px 0;
             }
             select {
                 font-size: 1.5em;
                 padding: 5px;
-                border: 1px solid #007bff;
-                border-radius: 5px;
+                border: 1px solid #ffffff;
                 background-color: #fff;
                 color: #333;
-                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5"><path d="M0 0l5 5 5-5z"/></svg>');
+                background-image: none;
                 background-repeat: no-repeat;
                 background-position: right 10px center;
-                padding-right: 25px;
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 appearance: none;
+                width: 1em;
+                margin-left: -1.2em;
             }
-            #result-duplex span:first-child {
-                margin-right: 10px;
+            select:hover {
+                border: 1px solid #007bff;
+                border-radius: 5px;
+            }
+            #result-duplex {
+                margin-left: -1em;
             }
             #values {
                 margin-top: 20px;
@@ -98,52 +112,69 @@
             }
             #remove-term {
                 color: red;
+                position: relative;
+                left: -1em;
+                top: -1em;
             }
             #add-term {
                 color: green;
+                position: relative;
+                left: -1.5em;
+            }
+            #result-terms span {
+                padding: 0 0.1em;
+                display: inline-block;
             }
         </style>
     </head>
     <body>
         <header>
-            <h1>Discover Duplex Numbers</h1>
-            <p>One Number, Many Possibilities</p>
+            <h1>Duplex Numbers</h1>
+            <p>a ± b ± c</p>
         </header>
 
         <section id="calculator">
-            <h2>Try It Yourself</h2>
-            <p>Edit the duplex number and perform operations.</p>
-            <div class="equation-row">
-                <div class="equation" id="original-duplex">
-                    <span contenteditable id="base">5</span>
-                    <div id="terms" style="display: inline">
-                        <span class="pm-symbol"> ± </span
-                        ><span contenteditable>2</span>
-                        <span class="pm-symbol"> ± </span
-                        ><span contenteditable>1</span>
-                        <span id="term-buttons">
-                            <button id="remove-term">x</button>
-                            <button id="add-term">+</button>
-                        </span>
+            <header>
+                <h2>Calculator</h2>
+                <p>
+                    add, extend or multiply duplex numbers, see the resulting
+                    distribution below
+                </p>
+            </header>
+            <div class="rows">
+                <div class="equation-row">
+                    <div class="equation" id="original-duplex">
+                        <span contenteditable id="base">5</span>
+                        <div id="terms" style="display: inline">
+                            <span class="pm-symbol"> ± </span
+                            ><span contenteditable>2</span>
+                            <span class="pm-symbol"> ± </span
+                            ><span contenteditable>1</span>
+                            <span id="term-buttons">
+                                <button id="remove-term">x</button>
+                                <button id="add-term">+</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="equation-row" id="operation">
+                    <select id="operator">
+                        <option value="+">+</option>
+                        <option value="*">*</option>
+                    </select>
+                    <span contenteditable id="scalar">2</span>
+                </div>
+                <div class="equation-row">
+                    <div class="equation" id="result-duplex">
+                        <span>=</span>
+                        <span id="result-base"></span>
+                        <div id="result-terms" style="display: inline"></div>
                     </div>
                 </div>
             </div>
-            <div class="equation-row" id="operation">
-                <select id="operator">
-                    <option value="+">+</option>
-                    <option value="*">*</option>
-                </select>
-                <span contenteditable id="scalar">2</span>
-            </div>
-            <div class="equation-row">
-                <div class="equation" id="result-duplex">
-                    <span>=</span>
-                    <span id="result-base"></span>
-                    <div id="result-terms" style="display: inline"></div>
-                </div>
-            </div>
-            <div id="values"></div>
         </section>
+
+        <div id="values"></div>
 
         <script>
             function getDuplexNumber() {
