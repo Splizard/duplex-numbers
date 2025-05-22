@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Duplex Numbers</title>
+        <style>
+            body {
+                font-family: "Arial", sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f0f0f0;
+                color: #333;
+            }
+            header {
+                text-align: center;
+                padding: 50px;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                font-family: "Times New Roman", serif;
+                font-size: 3em;
+                margin: 0;
+            }
+            section {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .equation-row {
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            .equation {
+                font-size: 1.5em;
+                display: inline-block;
+            }
+            .equation span[contenteditable],
+            #scalar {
+                border-bottom: 2px solid #007bff;
+                padding: 0 5px;
+                min-width: 30px;
+                display: inline-block;
+                text-align: center;
+            }
+            .pm-symbol {
+                font-size: 1.2em;
+                color: #007bff;
+            }
+            #terms,
+            #result-terms {
+                display: inline;
+            }
+            #operation {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                margin: 10px 0;
+            }
+            select {
+                font-size: 1.5em;
+                padding: 5px;
+                border: 1px solid #007bff;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5"><path d="M0 0l5 5 5-5z"/></svg>');
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                padding-right: 25px;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+            #result-duplex span:first-child {
+                margin-right: 10px;
+            }
+            #values {
+                margin-top: 20px;
+                text-align: center;
+                font-size: 1.2em;
+            }
+            #term-buttons {
+                margin-left: 5px;
+            }
+            #term-buttons button {
+                font-size: 0.8em;
+                border: none;
+                background: none;
+                cursor: pointer;
+                padding: 0;
+                margin: 0 2px;
+            }
+            #remove-term {
+                color: red;
+            }
+            #add-term {
+                color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Discover Duplex Numbers</h1>
+            <p>One Number, Many Possibilities</p>
+        </header>
+
+        <section id="calculator">
+            <h2>Try It Yourself</h2>
+            <p>Edit the duplex number and perform operations.</p>
+            <div class="equation-row">
+                <div class="equation" id="original-duplex">
+                    <span contenteditable id="base">5</span>
+                    <div id="terms" style="display: inline">
+                        <span class="pm-symbol"> ± </span
+                        ><span contenteditable>2</span>
+                        <span class="pm-symbol"> ± </span
+                        ><span contenteditable>1</span>
+                        <span id="term-buttons">
+                            <button id="remove-term">x</button>
+                            <button id="add-term">+</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="equation-row" id="operation">
+                <select id="operator">
+                    <option value="+">+</option>
+                    <option value="*">*</option>
+                </select>
+                <span contenteditable id="scalar">2</span>
+            </div>
+            <div class="equation-row">
+                <div class="equation" id="result-duplex">
+                    <span>=</span>
+                    <span id="result-base"></span>
+                    <div id="result-terms" style="display: inline"></div>
+                </div>
+            </div>
+            <div id="values"></div>
+        </section>
+
+        <script>
+            function getDuplexNumber() {
+                const base = parseFloat(
+                    document.getElementById("base").textContent,
+                );
+                if (isNaN(base)) return null;
+                const terms = Array.from(
+                    document.querySelectorAll("#terms span[contenteditable]"),
+                )
+                    .map((span) => Math.abs(parseFloat(span.textContent)))
+                    .filter((val) => !isNaN(val));
+                return { base, terms };
+            }
+
+            function computeResult(original, operator, scalar) {
+                if (!original || isNaN(scalar)) return null;
+                let result;
+                if (operator === "+") {
+                    result = {
+                        base: original.base + scalar,
+                        terms: original.terms,
+                    };
+                } else if (operator === "*") {
+                    result = {
+                        base: original.base * scalar,
+                        terms: original.terms.map(
+                            (term) => Math.abs(scalar) * term,
+                        ),
+                    };
+                }
+                return result;
+            }
+
+            function displayDuplexNumber(duplex) {
+                if (!duplex) {
+                    document.getElementById("result-base").textContent = "";
+                    document.getElementById("result-terms").innerHTML = "";
+                    return;
+                }
+                document.getElementById("result-base").textContent =
+                    duplex.base;
+                const termsDiv = document.getElementById("result-terms");
+                termsDiv.innerHTML = "";
+                duplex.terms.forEach((term) => {
+                    const pmSymbol = document.createElement("span");
+                    pmSymbol.className = "pm-symbol";
+                    pmSymbol.textContent = " ± ";
+                    const termSpan = document.createElement("span");
+                    termSpan.textContent = term;
+                    termsDiv.appendChild(pmSymbol);
+                    termsDiv.appendChild(termSpan);
+                });
+            }
+
+            function computePossibleValues(duplex) {
+                if (!duplex) return [];
+                const { base, terms } = duplex;
+                if (terms.length === 0) return [base];
+                const n = terms.length;
+                const values = [];
+                for (let i = 0; i < 1 << n; i++) {
+                    let value = base;
+                    for (let j = 0; j < n; j++) {
+                        const sign = i & (1 << j) ? 1 : -1;
+                        value += sign * terms[j];
+                    }
+                    values.push(value);
+                }
+                return values.sort((a, b) => a - b);
+            }
+
+            function displayPossibleValues(values) {
+                document.getElementById("values").innerHTML = values.join(", ");
+            }
+
+            function sanitizeInput(event) {
+                const target = event.target;
+                const originalText = target.textContent;
+                const sanitizedText = originalText.replace(/[^0-9.-]/g, "");
+                if (originalText !== sanitizedText) {
+                    target.textContent = sanitizedText;
+                    const range = document.createRange();
+                    range.selectNodeContents(target);
+                    range.collapse(false);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+                updateResult();
+            }
+
+            function updateResult() {
+                const original = getDuplexNumber();
+                const operator = document.getElementById("operator").value;
+                const scalar = parseFloat(
+                    document.getElementById("scalar").textContent,
+                );
+                const result = computeResult(original, operator, scalar);
+                displayDuplexNumber(result);
+                const values = computePossibleValues(result);
+                displayPossibleValues(values);
+                updateRemoveButtonVisibility();
+            }
+
+            function updateRemoveButtonVisibility() {
+                const termsDiv = document.getElementById("terms");
+                const removeButton = document.getElementById("remove-term");
+                const termSpans = document.querySelectorAll(
+                    "#terms span[contenteditable]",
+                );
+                if (termSpans.length > 0) {
+                    removeButton.style.display = "inline";
+                } else {
+                    removeButton.style.display = "none";
+                }
+            }
+
+            document
+                .querySelectorAll(
+                    "#original-duplex span[contenteditable], #scalar",
+                )
+                .forEach((span) => {
+                    span.addEventListener("input", sanitizeInput);
+                });
+
+            document
+                .getElementById("operator")
+                .addEventListener("change", updateResult);
+
+            document
+                .getElementById("add-term")
+                .addEventListener("click", function () {
+                    const termsDiv = document.getElementById("terms");
+                    const termButtons = document.getElementById("term-buttons");
+                    const pmSymbol = document.createElement("span");
+                    pmSymbol.className = "pm-symbol";
+                    pmSymbol.textContent = " ± ";
+                    const newTerm = document.createElement("span");
+                    newTerm.contentEditable = true;
+                    newTerm.textContent = "0";
+                    termsDiv.insertBefore(pmSymbol, termButtons);
+                    termsDiv.insertBefore(newTerm, termButtons);
+                    newTerm.addEventListener("input", sanitizeInput);
+                    updateResult();
+                });
+
+            document
+                .getElementById("remove-term")
+                .addEventListener("click", function () {
+                    const termsDiv = document.getElementById("terms");
+                    const termSpans = document.querySelectorAll(
+                        "#terms span[contenteditable]",
+                    );
+                    if (termSpans.length > 0) {
+                        termsDiv.removeChild(termSpans[termSpans.length - 1]); // remove last term span
+                        const pmSymbols =
+                            document.querySelectorAll("#terms .pm-symbol");
+                        if (pmSymbols.length > 0) {
+                            termsDiv.removeChild(
+                                pmSymbols[pmSymbols.length - 1],
+                            ); // remove last ± symbol
+                        }
+                        updateResult();
+                    }
+                });
+
+            updateResult(); // Initial update
+        </script>
+    </body>
+</html>
