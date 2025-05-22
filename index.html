@@ -232,7 +232,9 @@
             </div>
         </section>
 
-        <div id="values"></div>
+        <div id="values">
+            <button id="toggle-view">Toggle View</button>
+        </div>
 
         <section id="statistical-properties">
             <header>
@@ -280,6 +282,7 @@
 
         <script>
             const MAX_TERMS = 5; // Maximum number of additional components
+            let isMultiSetView = true;
 
             function getDuplexNumber() {
                 const base = parseFloat(
@@ -340,19 +343,22 @@
                 if (terms.length === 0) return [base];
                 const n = terms.length;
                 const values = [];
-                for (let i = 0; i < 1 << n; i++) {
-                    let value = base;
-                    for (let j = 0; j < n; j++) {
-                        const sign = i & (1 << j) ? 1 : -1;
-                        value += sign * terms[j];
+                function walkTree(index, currentValue) {
+                    if (index === n) {
+                        values.push(currentValue);
+                        return;
                     }
-                    values.push(value);
+                    walkTree(index + 1, currentValue - terms[index]);
+                    walkTree(index + 1, currentValue + terms[index]);
                 }
-                return values.sort((a, b) => a - b);
+                walkTree(0, base);
+                return values;
             }
 
             function displayPossibleValues(values) {
-                document.getElementById("values").innerHTML = values.join(", ");
+                const uniqueValues = [...new Set(values)];
+                const displayValues = isMultiSetView ? values : uniqueValues;
+                document.getElementById("values").innerHTML = displayValues.join(", ");
             }
 
             function sanitizeInput(event) {
@@ -450,6 +456,13 @@
                         }
                         updateResult();
                     }
+                });
+
+            document
+                .getElementById("toggle-view")
+                .addEventListener("click", function () {
+                    isMultiSetView = !isMultiSetView;
+                    updateResult();
                 });
 
             updateResult(); // Initial update
