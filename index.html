@@ -279,6 +279,8 @@
         </section>
 
         <script>
+            const MAX_TERMS = 5; // Maximum number of additional components
+
             function getDuplexNumber() {
                 const base = parseFloat(
                     document.getElementById("base").textContent,
@@ -385,6 +387,7 @@
             function updateRemoveButtonVisibility() {
                 const termsDiv = document.getElementById("terms");
                 const removeButton = document.getElementById("remove-term");
+                const addButton = document.getElementById("add-term");
                 const termSpans = document.querySelectorAll(
                     "#terms span[contenteditable]",
                 );
@@ -392,6 +395,11 @@
                     removeButton.style.display = "inline";
                 } else {
                     removeButton.style.display = "none";
+                }
+                if (termSpans.length >= MAX_TERMS) {
+                    addButton.style.display = "none";
+                } else {
+                    addButton.style.display = "inline";
                 }
             }
 
