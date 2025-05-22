@@ -125,6 +125,31 @@
                 padding: 0 0.1em;
                 display: inline-block;
             }
+            /* Tab view styles */
+            .tab-view {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+            .tab {
+                padding: 10px 20px;
+                cursor: pointer;
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                border-bottom: none;
+                margin-right: 5px;
+            }
+            .tab.active {
+                background-color: #fff;
+                border-bottom: 1px solid #fff;
+            }
+            #tab-content {
+                text-align: center;
+                font-size: 1.2em;
+                padding: 20px;
+                border: 1px solid #ccc;
+                background-color: #fff;
+            }
         </style>
     </head>
     <body>
@@ -232,9 +257,11 @@
             </div>
         </section>
 
-        <div id="values">
-            <button id="toggle-view">Toggle View</button>
+        <div class="tab-view">
+            <div class="tab active" data-tab="bag-view">Bag View</div>
+            <div class="tab" data-tab="set-view">Set View</div>
         </div>
+        <div id="tab-content"></div>
 
         <section id="statistical-properties">
             <header>
@@ -464,6 +491,34 @@
                     isMultiSetView = !isMultiSetView;
                     updateResult();
                 });
+
+            // Tab switching logic
+            document.querySelectorAll(".tab").forEach((tab) => {
+                tab.addEventListener("click", function () {
+                    document.querySelectorAll(".tab").forEach((t) => {
+                        t.classList.remove("active");
+                    });
+                    tab.classList.add("active");
+                    const selectedTab = tab.getAttribute("data-tab");
+                    updateTabContent(selectedTab);
+                });
+            });
+
+            function updateTabContent(selectedTab) {
+                const original = getDuplexNumber();
+                const operator = document.getElementById("operator").value;
+                const scalar = parseFloat(
+                    document.getElementById("scalar").textContent,
+                );
+                const result = computeResult(original, operator, scalar);
+                const values = computePossibleValues(result);
+                const uniqueValues = [...new Set(values)];
+                const displayValues = selectedTab === "bag-view" ? values : uniqueValues;
+                document.getElementById("tab-content").innerHTML = displayValues.join(", ");
+            }
+
+            // Initial tab content update
+            updateTabContent("bag-view");
 
             updateResult(); // Initial update
         </script>
