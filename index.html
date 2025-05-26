@@ -145,9 +145,7 @@
             }
             #tab-content {
                 text-align: center;
-                font-size: 1.2em;
                 padding: 20px;
-                border: 1px solid #ccc;
                 background-color: #fff;
                 max-width: 800px;
                 margin: 0 auto;
@@ -268,10 +266,14 @@
         </section>
 
         <div class="tab-view">
-            <div class="tab active" data-tab="bag-view">Bag View</div>
-            <div class="tab" data-tab="set-view">Set View</div>
+            <div class="tab active" data-tab="bag-view">Multiset / Bag</div>
+            <div class="tab" data-tab="set-view">Underlying Set</div>
         </div>
-        <div id="tab-content"></div>
+        <section id="tab-content">
+            <p id="description"></p>
+            <p>Displayed in depth-first order (following minus before plus).</p>
+            <div id="values"></div>
+        </section>
 
         <section id="statistical-properties">
             <header>
@@ -518,7 +520,15 @@
                 const uniqueValues = [...new Set(values)];
                 const displayValues =
                     selectedTab === "bag-view" ? values : uniqueValues;
-                document.getElementById("tab-content").innerHTML =
+                const description = document.getElementById("description");
+                if (selectedTab === "bag-view") {
+                    description.textContent =
+                        "The multiset / bag represents the full resulting distribution of numbers.";
+                } else {
+                    description.textContent =
+                        "The underlying set represents the resulting set of numbers (with duplicates removed).";
+                }
+                document.getElementById("values").innerHTML =
                     displayValues.join(", ");
             }
 
