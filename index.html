@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Duplex Numbers</title>
+        <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
         <style>
             body {
                 font-family: "Arial", sans-serif;
@@ -152,12 +153,17 @@
             }
         </style>
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-68LFW89VNM"></script>
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-68LFW89VNM"
+        ></script>
         <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-68LFW89VNM');
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-68LFW89VNM");
         </script>
     </head>
     <body>
@@ -318,6 +324,106 @@
             when b ≠ d, the eigenvalues are:
             <pre>       a ± √(b² + c² - d²)</pre>
         </section>
+
+        <section id="representing-inequalities">
+            <header>
+                <h2>Representing Inequalities</h2>
+            </header>
+            <p>
+                Duplex numbers may be used to represent '≠' inequalities. For
+                example, the inequality
+            </p>
+            <pre>1 = 0</pre>
+            <p>can be represented as:</p>
+            <pre>0.5 ± 0.5</pre>
+        </section>
+
+        <section id="plotting-parallel-lines">
+            <header>
+                <h2>Plotting Parallel Lines</h2>
+            </header>
+            <p>
+                Duplex numbers are useful for plotting multiple parallel lines
+                on a graph. For example, the equation: x = 5±2 results in the
+                following graph:
+            </p>
+            <div id="graph" style="width: 100%; height: 600px"></div>
+            <script>
+                // Data for x = 3 (vertical line)
+                const trace1 = {
+                    x: [3, 3],
+                    y: [-10, 10],
+                    mode: "lines",
+                    name: "x = 3",
+                    line: { color: "blue", width: 2 },
+                };
+
+                // Data for x = 7 (vertical line)
+                const trace2 = {
+                    x: [7, 7],
+                    y: [-10, 10],
+                    mode: "lines",
+                    name: "x = 7",
+                    line: { color: "red", width: 2 },
+                };
+
+                // Layout configuration
+                const layout = {
+                    title: {
+                        text: "Parallel Lines: x = 5±2",
+                        x: 0.5,
+                        xanchor: "center",
+                    },
+                    xaxis: {
+                        title: "x",
+                        range: [0, 10],
+                        gridcolor: "#e0e0e0",
+                        zeroline: true,
+                        zerolinecolor: "black",
+                        zerolinewidth: 1,
+                    },
+                    yaxis: {
+                        title: "y",
+                        range: [-10, 10],
+                        gridcolor: "#e0e0e0",
+                        zeroline: true,
+                        zerolinecolor: "black",
+                        zerolinewidth: 1,
+                        scaleanchor: "x",
+                        scaleratio: 1,
+                    },
+                    showlegend: true,
+                    plot_bgcolor: "#f9f9f9",
+                    paper_bgcolor: "#ffffff",
+                    margin: { t: 50, b: 50, l: 50, r: 50 },
+                };
+
+                // Plot the graph
+                Plotly.newPlot("graph", [trace1, trace2], layout);
+            </script>
+        </section>
+
+        <section id="quantum-calculations">
+            <header>
+                <h2>Quantum Calculations</h2>
+            </header>
+            <p>
+                Duplex numbers can be used to build an intuition about quantum
+                calculations being performed on a quantum computer. You can
+                think of a duplex numbers as being an additional numerical type
+                available on the quantum computer, which can efficiently perform
+                modulus and exponentiation operations, which would otherwise
+                become infeasible to do as the number of simultaneously
+                represented values increases.
+            </p>
+        </section>
+
+        <p style="text-align: center">
+            Found a new use-case for duplex numbers?
+            <a href="https://github.com/Splizard/duplex-numbers/compare"
+                >Open a pull request!</a
+            >
+        </p>
 
         <script>
             const MAX_TERMS = 5; // Maximum number of additional components
